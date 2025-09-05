@@ -1,0 +1,50 @@
+# fly.toml app configuration file generated for formmy-tasks on 2025-09-03T23:09:45-06:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'formmy-tasks'
+primary_region = 'iad'
+
+[build]
+
+[deploy]
+  strategy = 'rolling'
+
+[env]
+  DATABASE_PATH = '/data/database.sqlite'
+  DATABASE_TYPE = 'sqlite'
+  NODE_ENV = 'production'
+  PORT = '3000'
+  HOST = '0.0.0.0'
+  SECRETKEY_OVERWRITE = 'your-secret-key-here'
+
+[processes]
+  app = 'pnpm start'
+
+[[mounts]]
+  source = 'formmy_data'
+  destination = '/data'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '25s'
+    grace_period = '60s'
+    method = 'GET'
+    path = '/api/v1/ping'
+
+[[vm]]
+  memory = '2gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[machine]
+  version = "v3"
