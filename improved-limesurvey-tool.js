@@ -2,8 +2,8 @@ const LIMESURVEY_URL = 'https://limesurvey-app.fly.dev/index.php/admin/remotecon
 
 // Configuración por defecto (puede ser parametrizada)
 const DEFAULT_CONFIG = {
-    username: 'admin',
-    password: 'Poweroso77'
+    username: process.env.LIMESURVEY_USERNAME || 'admin',
+    password: process.env.LIMESURVEY_PASSWORD || 'fallback_password'
 };
 
 const func = async (input) => {
