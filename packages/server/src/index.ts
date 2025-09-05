@@ -326,16 +326,47 @@ export class App {
         // Serve UI static
         // ----------------------------------------
 
-        const packagePath = getNodeModulesPackagePath('flowise-ui')
-        const uiBuildPath = path.join(packagePath, 'build')
-        const uiHtmlPath = path.join(packagePath, 'build', 'index.html')
+        // For development, use packages/ui/public as static files
+        // In production, this should use the built files
+        const isDev = process.env.NODE_ENV !== 'production'
+        
+        if (isDev) {
+            // For development, serve from public directory
+            const uiPublicPath = path.resolve(__dirname, '../../ui/public')
+            const uiHtmlPath = path.resolve(__dirname, '../../ui/public/index.html')
+            
+            this.app.use('/', express.static(uiPublicPath))
+            
+            // All other requests not handled will return React app
+            this.app.use((req: Request, res: Response) => {
+                res.sendFile(uiHtmlPath)
+            })
+        } else {
+            // For production, use the built files
+            try {
+                const packagePath = getNodeModulesPackagePath('flowise-ui')
+                const uiBuildPath = path.join(packagePath, 'build')
+                const uiHtmlPath = path.join(packagePath, 'build', 'index.html')
 
-        this.app.use('/', express.static(uiBuildPath))
+                this.app.use('/', express.static(uiBuildPath))
 
-        // All other requests not handled will return React app
-        this.app.use((req: Request, res: Response) => {
-            res.sendFile(uiHtmlPath)
-        })
+                // All other requests not handled will return React app
+                this.app.use((req: Request, res: Response) => {
+                    res.sendFile(uiHtmlPath)
+                })
+            } catch (error) {
+                logger.warn('⚠️ [server]: Could not find flowise-ui package, falling back to development mode')
+                const uiPublicPath = path.resolve(__dirname, '../../ui/public')
+                const uiHtmlPath = path.resolve(__dirname, '../../ui/public/index.html')
+                
+                this.app.use('/', express.static(uiPublicPath))
+                
+                // All other requests not handled will return React app
+                this.app.use((req: Request, res: Response) => {
+                    res.sendFile(uiHtmlPath)
+                })
+            }
+        }
 
         // Error handling
         this.app.use(errorHandlerMiddleware)
