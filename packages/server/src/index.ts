@@ -342,30 +342,44 @@ export class App {
                 res.sendFile(uiHtmlPath)
             })
         } else {
-            // For production, use the built files
+            // For production, try to use built UI files from multiple possible locations
+            let uiBuildPath: string
+            let uiHtmlPath: string
+            let foundBuild = false
+            
+            // Try 1: Built UI files in container
+            const containerUiBuildPath = path.resolve(__dirname, '../../ui/build')
+            const containerUiHtmlPath = path.resolve(__dirname, '../../ui/build', 'index.html')
+            
             try {
-                const packagePath = getNodeModulesPackagePath('flowise-ui')
-                const uiBuildPath = path.resolve(packagePath, 'build')
-                const uiHtmlPath = path.resolve(packagePath, 'build', 'index.html')
-
-                this.app.use('/', express.static(uiBuildPath))
-
-                // All other requests not handled will return React app
-                this.app.use((req: Request, res: Response) => {
-                    res.sendFile(uiHtmlPath)
-                })
+                // Check if built UI files exist
+                require('fs').accessSync(containerUiHtmlPath)
+                uiBuildPath = containerUiBuildPath
+                uiHtmlPath = containerUiHtmlPath
+                foundBuild = true
+                logger.info('✅ [server]: Using built UI files from container')
             } catch (error) {
-                logger.warn('⚠️ [server]: Could not find flowise-ui package, falling back to development mode')
-                const uiPublicPath = path.resolve(__dirname, '../../ui/public')
-                const uiHtmlPath = path.resolve(__dirname, '../../ui/public/index.html')
-                
-                this.app.use('/', express.static(uiPublicPath))
-                
-                // All other requests not handled will return React app
-                this.app.use((req: Request, res: Response) => {
-                    res.sendFile(uiHtmlPath)
-                })
+                // Try 2: flowise-ui package (legacy)
+                try {
+                    const packagePath = getNodeModulesPackagePath('flowise-ui')
+                    uiBuildPath = path.resolve(packagePath, 'build')
+                    uiHtmlPath = path.resolve(packagePath, 'build', 'index.html')
+                    require('fs').accessSync(uiHtmlPath)
+                    foundBuild = true
+                    logger.info('✅ [server]: Using flowise-ui package')
+                } catch (packageError) {
+                    logger.warn('⚠️ [server]: Could not find built UI files, falling back to public directory')
+                    uiBuildPath = path.resolve(__dirname, '../../ui/public')
+                    uiHtmlPath = path.resolve(__dirname, '../../ui/public/index.html')
+                }
             }
+
+            this.app.use('/', express.static(uiBuildPath))
+            
+            // All other requests not handled will return React app
+            this.app.use((req: Request, res: Response) => {
+                res.sendFile(uiHtmlPath)
+            })
         }
 
         // Error handling
