@@ -1,4 +1,4 @@
-# Build local monorepo image
+# Build local monorepo image - Force rebuild $(date)
 # docker build --no-cache -t  flowise .
 
 # Run image
@@ -23,6 +23,8 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 ENV NODE_OPTIONS=--max-old-space-size=8192
+# Cache buster
+ENV CACHE_BUST=2025-09-05-19-44
 
 WORKDIR /usr/src
 
