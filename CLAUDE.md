@@ -72,8 +72,8 @@ $env:NODE_OPTIONS="--max-old-space-size=4096"
 - **Database**: SQLite (with persistent volumes on Fly.io)
 - **Package Manager**: PNPM (required, not npm/yarn)
 - **Deployment**: Fly.io
-- **Node Version**: >=18.15.0 <19.0.0 || ^20
-- **Memory**: 2GB VM (configured in fly.toml)
+- **Node Version**: >=18.15.0 <19.0.0 || >=20.0.0 || >=22.0.0
+- **Memory**: 1GB VM (configured in fly.toml)
 
 ## Rebranding Completed (Sept 4, 2025)
 

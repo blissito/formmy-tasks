@@ -42,9 +42,9 @@ primary_region = 'iad'
     path = '/api/v1/ping'
 
 [[vm]]
-  memory = '4gb'
+  memory = '1gb'
   cpu_kind = 'shared'
-  cpus = 1
+  cpus = 2
 
 [machine]
   version = "v3"
