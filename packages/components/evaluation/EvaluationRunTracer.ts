@@ -160,6 +160,6 @@ export class EvaluationRunTracer extends RunCollectorCallbackHandler {
 
 function elapsed(run: Run) {
     if (!run.end_time) return ''
-    const elapsed = Number(run.end_time) - Number(run.start_time)
+    const elapsed = (run.end_time ? Number(run.end_time) : 0) - (run.start_time ? Number(run.start_time) : 0)
     return `${elapsed.toFixed(2)}`
 }

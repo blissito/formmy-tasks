@@ -59,7 +59,7 @@ class AdvancedStructuredOutputParser implements INode {
 
         try {
             const zodSchema = SecureZodSchemaParser.parseZodSchema(schemaString)
-            const structuredOutputParser = LangchainStructuredOutputParser.fromZodSchema(zodSchema as any)
+            const structuredOutputParser = LangchainStructuredOutputParser.fromZodSchema(zodSchema as any as Parameters<typeof LangchainStructuredOutputParser.fromZodSchema>[0])
 
             const baseParse = structuredOutputParser.parse
 
