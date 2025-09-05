@@ -96,7 +96,7 @@ class Condition_SeqAgents implements INode {
     constructor() {
         this.label = 'Condition'
         this.name = 'seqCondition'
-        this.version = 2.1
+        this.version = 3.0
         this.type = 'Condition'
         this.icon = 'condition.svg'
         this.category = 'Sequential Agents'
