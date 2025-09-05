@@ -345,8 +345,8 @@ export class App {
             // For production, use the built files
             try {
                 const packagePath = getNodeModulesPackagePath('flowise-ui')
-                const uiBuildPath = path.join(packagePath, 'build')
-                const uiHtmlPath = path.join(packagePath, 'build', 'index.html')
+                const uiBuildPath = path.resolve(packagePath, 'build')
+                const uiHtmlPath = path.resolve(packagePath, 'build', 'index.html')
 
                 this.app.use('/', express.static(uiBuildPath))
 
