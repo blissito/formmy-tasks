@@ -119,9 +119,9 @@ export class DynamicStructuredTool<
             // Handle empty string input for tools with no parameters
             const argumentsToProcess = arg === "" ? {} : arg
             
-            if (typeof argumentsToProcess === 'object' && Object.keys(argumentsToProcess).length) {
+            if (typeof argumentsToProcess === 'object' && argumentsToProcess && Object.keys(argumentsToProcess).length) {
                 for (const item in argumentsToProcess) {
-                    additionalSandbox[`$${item}`] = argumentsToProcess[item]
+                    additionalSandbox[`$${item}`] = (argumentsToProcess as ICommonObject)[item]
                 }
             }
 
