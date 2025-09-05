@@ -104,4 +104,17 @@
 ## S/MIME message
 *.smime
 *.vsix
+
+# Environment files with secrets
 .env.secrets
+.env.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# API keys and credentials
+*api-key*
+*api_key*
+*.apikey
+credentials.json
+config.json
