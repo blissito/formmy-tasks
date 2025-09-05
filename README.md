@@ -2,217 +2,121 @@
 
 Asistentes, Chatflows, Agentflows y marketplace para Formmy IA
 
-## 📚 Table of Contents
+## 📚 Tabla de Contenidos
 
--   [⚡ Quick Start](#-quick-start)
+-   [⚡ Inicio Rápido](#-inicio-rápido)
 -   [🐳 Docker](#-docker)
--   [👨‍💻 Developers](#-developers)
--   [🌱 Env Variables](#-env-variables)
--   [📖 Documentation](#-documentation)
--   [🌐 Self Host](#-self-host)
--   [☁️ Flowise Cloud](#️-flowise-cloud)
--   [🙋 Support](#-support)
--   [🙌 Contributing](#-contributing)
--   [📄 License](#-license)
+-   [👨‍💻 Desarrolladores](#-desarrolladores)
+-   [🌱 Variables de Entorno](#-variables-de-entorno)
+-   [🚀 Deploy](#-deploy)
+-   [📄 Licencia](#-licencia)
 
-## ⚡Quick Start
+## ⚡ Inicio Rápido
 
-Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
+**Aplicación en vivo:** https://formmy-tasks.fly.dev/
 
-1. Install Flowise
+Para desarrollo local, descarga e instala [NodeJS](https://nodejs.org/en/download) >= 18.15.0
+
+1. Clona el repositorio:
     ```bash
-    npm install -g flowise
-    ```
-2. Start Flowise
-
-    ```bash
-    npx flowise start
+    git clone https://github.com/blissito/formmy-tasks.git
+    cd formmy-tasks
     ```
 
-3. Open [http://localhost:3000](http://localhost:3000)
+2. Instala las dependencias:
+    ```bash
+    npm i -g pnpm
+    pnpm install
+    ```
+
+3. Configura las variables de entorno:
+    ```bash
+    cp .env.example .env
+    # Edita .env con tus API keys
+    ```
+
+4. Construye y ejecuta:
+    ```bash
+    pnpm build
+    pnpm start
+    ```
+
+5. Abre [http://localhost:3000](http://localhost:3000)
 
 ## 🐳 Docker
 
 ### Docker Compose
 
-1. Clone the Flowise project
-2. Go to `docker` folder at the root of the project
-3. Copy `.env.example` file, paste it into the same location, and rename to `.env` file
-4. `docker compose up -d`
-5. Open [http://localhost:3000](http://localhost:3000)
-6. You can bring the containers down by `docker compose stop`
+1. Clona el proyecto
+2. Ve a la carpeta `docker`  
+3. Copia `.env.example` a `.env` y configura tus variables
+4. Ejecuta: `docker compose up -d`
+5. Abre [http://localhost:3000](http://localhost:3000)
 
-### Docker Image
+### Imagen Docker
 
-1. Build the image locally:
+```bash
+# Construir la imagen
+docker build --no-cache -t formmy-tasks .
 
-    ```bash
-    docker build --no-cache -t flowise .
-    ```
+# Ejecutar contenedor
+docker run -d --name formmy-tasks -p 3000:3000 formmy-tasks
+```
 
-2. Run image:
+## 👨‍💻 Desarrolladores
 
-    ```bash
-    docker run -d --name flowise -p 3000:3000 flowise
-    ```
+Formmy Tasks tiene 4 módulos principales:
 
-3. Stop image:
+-   `server`: Backend Node.js con APIs
+-   `ui`: Frontend React
+-   `components`: Integraciones de nodos y herramientas
+-   `api-documentation`: Documentación Swagger auto-generada
 
-    ```bash
-    docker stop flowise
-    ```
+### Configuración para Desarrollo
 
-## 👨‍💻 Developers
-
-Flowise has 3 different modules in a single mono repository.
-
--   `server`: Node backend to serve API logics
--   `ui`: React frontend
--   `components`: Third-party nodes integrations
--   `api-documentation`: Auto-generated swagger-ui API docs from express
-
-### Prerequisite
-
--   Install [PNPM](https://pnpm.io/installation)
+1. Instala [PNPM](https://pnpm.io/installation):
     ```bash
     npm i -g pnpm
     ```
 
-### Setup
-
-1.  Clone the repository:
-
-    ```bash
-    git clone https://github.com/FlowiseAI/Flowise.git
-    ```
-
-2.  Go into repository folder:
-
-    ```bash
-    cd Flowise
-    ```
-
-3.  Install all dependencies of all modules:
-
+2. Instala dependencias:
     ```bash
     pnpm install
     ```
 
-4.  Build all the code:
-
+3. Construye el proyecto:
     ```bash
-    pnpm build
-    ```
-
-    <details>
-    <summary>Exit code 134 (JavaScript heap out of memory)</summary>  
-    If you get this error when running the above `build` script, try increasing the Node.js heap size and run the script again:
-
-    ```bash
-    # macOS / Linux / Git Bash
     export NODE_OPTIONS="--max-old-space-size=4096"
-
-    # Windows PowerShell
-    $env:NODE_OPTIONS="--max-old-space-size=4096"
-
-    # Windows CMD
-    set NODE_OPTIONS=--max-old-space-size=4096
-    ```
-
-    Then run:
-
-    ```bash
     pnpm build
     ```
 
-    </details>
-
-5.  Start the app:
-
+4. Para desarrollo con hot-reload:
     ```bash
-    pnpm start
+    pnpm dev
     ```
+    
+    La app estará disponible en [http://localhost:8080](http://localhost:8080)
 
-    You can now access the app on [http://localhost:3000](http://localhost:3000)
+## 🌱 Variables de Entorno
 
-6.  For development build:
+Configura las variables en el archivo `.env` basándote en `.env.example`. 
 
-    -   Create `.env` file and specify the `VITE_PORT` (refer to `.env.example`) in `packages/ui`
-    -   Create `.env` file and specify the `PORT` (refer to `.env.example`) in `packages/server`
-    -   Run:
+**Variables principales:**
+- `ANTHROPIC_API_KEY`: Para modelos Claude (recomendado)
+- `OPENAI_API_KEY`: Para modelos GPT
+- `DATABASE_PATH`: Ruta de la base de datos SQLite
+- `SECRETKEY_OVERWRITE`: Clave secreta para cifrado
 
-        ```bash
-        pnpm dev
-        ```
+## 🚀 Deploy
 
-    Any code changes will reload the app automatically on [http://localhost:8080](http://localhost:8080)
+La aplicación está desplegada en Fly.io con:
+- Node v3 para mejor rendimiento
+- Base de datos SQLite con volumen persistente
+- 2GB de memoria RAM
+- Health checks optimizados
 
-## 🌱 Env Variables
+**Deploy automático:** Los cambios en `main` se despliegan automáticamente
 
-Flowise supports different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://github.com/FlowiseAI/Flowise/blob/main/CONTRIBUTING.md#-env-variables)
+## 📄 Licencia
 
-## 📖 Documentation
-
-You can view the Flowise Docs [here](https://docs.flowiseai.com/)
-
-## 🌐 Self Host
-
-Deploy Flowise self-hosted in your existing infrastructure, we support various [deployments](https://docs.flowiseai.com/configuration/deployment)
-
--   [AWS](https://docs.flowiseai.com/configuration/deployment/aws)
--   [Azure](https://docs.flowiseai.com/configuration/deployment/azure)
--   [Digital Ocean](https://docs.flowiseai.com/configuration/deployment/digital-ocean)
--   [GCP](https://docs.flowiseai.com/configuration/deployment/gcp)
--   [Alibaba Cloud](https://computenest.console.aliyun.com/service/instance/create/default?type=user&ServiceName=Flowise社区版)
--   <details>
-      <summary>Others</summary>
-
-    -   [Railway](https://docs.flowiseai.com/configuration/deployment/railway)
-
-        [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/pn4G8S?referralCode=WVNPD9)
-
-    -   [Render](https://docs.flowiseai.com/configuration/deployment/render)
-
-        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.flowiseai.com/configuration/deployment/render)
-
-    -   [HuggingFace Spaces](https://docs.flowiseai.com/deployment/hugging-face)
-
-        <a href="https://huggingface.co/spaces/FlowiseAI/Flowise"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="HuggingFace Spaces"></a>
-
-    -   [Elestio](https://elest.io/open-source/flowiseai)
-
-        [![Deploy on Elestio](https://elest.io/images/logos/deploy-to-elestio-btn.png)](https://elest.io/open-source/flowiseai)
-
-    -   [Sealos](https://template.sealos.io/deploy?templateName=flowise)
-
-        [![Deploy on Sealos](https://sealos.io/Deploy-on-Sealos.svg)](https://template.sealos.io/deploy?templateName=flowise)
-
-    -   [RepoCloud](https://repocloud.io/details/?app_id=29)
-
-        [![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploy.png)](https://repocloud.io/details/?app_id=29)
-
-      </details>
-
-## ☁️ Flowise Cloud
-
-Get Started with [Flowise Cloud](https://flowiseai.com/).
-
-## 🙋 Support
-
-Feel free to ask any questions, raise problems, and request new features in [Discussion](https://github.com/FlowiseAI/Flowise/discussions).
-
-## 🙌 Contributing
-
-Thanks go to these awesome contributors
-
-<a href="https://github.com/FlowiseAI/Flowise/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=FlowiseAI/Flowise" />
-</a><br><br>
-
-See [Contributing Guide](CONTRIBUTING.md). Reach out to us at [Discord](https://discord.gg/jbaHfsRVBW) if you have any questions or issues.
-
-[![Star History Chart](https://api.star-history.com/svg?repos=FlowiseAI/Flowise&type=Timeline)](https://star-history.com/#FlowiseAI/Flowise&Date)
-
-## 📄 License
-
-Source code in this repository is made available under the [Apache License Version 2.0](LICENSE.md).
+Este código está disponible bajo la [Licencia Apache 2.0](LICENSE.md).
