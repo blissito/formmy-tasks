@@ -68,7 +68,9 @@ export class DynamicStructuredTool<
         }
         let parsed
         try {
-            parsed = await this.schema.parseAsync(arg)
+            // Handle empty string input for tools with no parameters
+            const inputToValidate = arg === "" ? {} : arg
+            parsed = await this.schema.parseAsync(inputToValidate)
         } catch (e) {
             throw new ToolInputParsingException(`Received tool input did not match expected schema`, JSON.stringify(arg))
         }
@@ -110,25 +112,42 @@ export class DynamicStructuredTool<
         _?: CallbackManagerForToolRun,
         flowConfig?: { sessionId?: string; chatId?: string; input?: string; state?: ICommonObject }
     ): Promise<string> {
-        // Create additional sandbox variables for tool arguments
-        const additionalSandbox: ICommonObject = {}
+        try {
+            // Create additional sandbox variables for tool arguments
+            const additionalSandbox: ICommonObject = {}
 
-        if (typeof arg === 'object' && Object.keys(arg).length) {
-            for (const item in arg) {
-                additionalSandbox[`$${item}`] = arg[item]
+            // Handle empty string input for tools with no parameters
+            const argumentsToProcess = arg === "" ? {} : arg
+            
+            if (typeof argumentsToProcess === 'object' && Object.keys(argumentsToProcess).length) {
+                for (const item in argumentsToProcess) {
+                    additionalSandbox[`$${item}`] = argumentsToProcess[item]
+                }
             }
+
+            // Prepare flow object for sandbox
+            const flow = this.flowObj ? { ...this.flowObj, ...flowConfig } : {}
+
+            const sandbox = createCodeExecutionSandbox('', this.variables || [], flow, additionalSandbox)
+
+            const response = await executeJavaScriptCode(this.code, sandbox, {
+                timeout: 10000
+            })
+
+            // Ensure response is always a string
+            if (response === null || response === undefined) {
+                return ''
+            }
+            
+            if (typeof response === 'string') {
+                return response
+            }
+            
+            // Convert objects, numbers, booleans to string
+            return JSON.stringify(response)
+        } catch (error) {
+            throw new Error(`CustomTool execution failed: ${error instanceof Error ? error.message : String(error)}`)
         }
-
-        // Prepare flow object for sandbox
-        const flow = this.flowObj ? { ...this.flowObj, ...flowConfig } : {}
-
-        const sandbox = createCodeExecutionSandbox('', this.variables || [], flow, additionalSandbox)
-
-        const response = await executeJavaScriptCode(this.code, sandbox, {
-            timeout: 10000
-        })
-
-        return response
     }
 
     setVariables(variables: any[]) {

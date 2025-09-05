@@ -110,10 +110,16 @@ class CustomTool_Tools implements INode {
             })
 
             if (!tool) throw new Error(`Tool ${selectedToolId} not found`)
+            // Handle empty schema case - if schema is empty array, create empty zod object
+            const parsedSchema = typeof tool.schema === 'string' ? JSON.parse(tool.schema) : tool.schema
+            const zodSchema = Array.isArray(parsedSchema) && parsedSchema.length === 0 
+                ? z.object({}) 
+                : z.object(convertSchemaToZod(tool.schema))
+                
             const obj = {
                 name: tool.name,
                 description: tool.description,
-                schema: z.object(convertSchemaToZod(tool.schema)),
+                schema: zodSchema,
                 code: tool.func
             }
             if (customToolFunc) obj.code = customToolFunc
