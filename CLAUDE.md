@@ -89,7 +89,7 @@ $env:NODE_OPTIONS="--max-old-space-size=4096"
 - `ui/src/ui-component/extended/Logo.jsx` - Logo component
 - `ui/src/layout/MainLayout/Header/index.jsx` - Removed GitHub button
 - `ui/public/index.html` - Updated metadata and titles
-- `fly.toml` - Configured with 2GB memory and proper host binding
+- `fly.toml` - Configured with 1GB memory, 2 CPUs and proper host binding
 
 ### Deployment Configuration
 - **App Name**: formmy-tasks
