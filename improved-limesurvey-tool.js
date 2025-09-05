@@ -1,54 +1,159 @@
-const { exec } = require('child_process');
-const util = require('util');
-const execAsync = util.promisify(exec);
+const LIMESURVEY_URL = 'https://limesurvey-app.fly.dev/index.php/admin/remotecontrol';
 
-const func = async (command) => {
-    try {
-        console.log(`Ejecutando comando LimeSurvey: lime ${command}`);
+// Configuración por defecto (puede ser parametrizada)
+const DEFAULT_CONFIG = {
+    username: 'admin',
+    password: 'Poweroso77'
+};
+
+const func = async (input) => {
+    // Parsear el input string que viene de Flowise
+    let method, params = {}, config = DEFAULT_CONFIG;
+    
+    if (typeof input === 'string') {
+        // Formato: "list_surveys" o "get_survey_properties 123" o "method param1 param2"
+        const parts = input.trim().split(' ');
+        method = parts[0];
         
-        // Verificar que el comando lime existe
-        try {
-            await execAsync('which lime');
-        } catch (error) {
-            return `Error: El CLI 'lime' no está instalado o no está en el PATH. Instala LimeSurvey CLI primero.`;
+        // Convertir parámetros posicionales a objeto según el método
+        if (parts.length > 1) {
+            switch (method) {
+                case 'get_survey_properties':
+                case 'list_participants':
+                case 'get_participant_properties':
+                    params.surveyId = parts[1];
+                    break;
+                case 'add_participants':
+                    params.surveyId = parts[1];
+                    params.participantData = parts.slice(2);
+                    break;
+                default:
+                    // Para otros métodos, usar parámetros como array
+                    params.args = parts.slice(1);
+            }
+        }
+    } else if (typeof input === 'object') {
+        // Si viene como objeto (para compatibilidad futura)
+        method = input.method;
+        params = input.params || {};
+        config = input.config || DEFAULT_CONFIG;
+    } else {
+        return 'Error: Formato de entrada inválido. Use string o objeto.';
+    }
+    let sessionKey = null;
+    
+    try {
+        console.log(`Ejecutando método LimeSurvey: ${method}`);
+        
+        // 1. Obtener session key (login)
+        const loginResponse = await fetch(LIMESURVEY_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                method: 'get_session_key',
+                params: [config.username, config.password],
+                id: 1
+            })
+        });
+
+        if (!loginResponse.ok) {
+            return `Error de conectividad: ${loginResponse.status} - ${loginResponse.statusText}`;
+        }
+
+        const loginData = await loginResponse.json();
+        
+        if (loginData.error) {
+            return `Error de autenticación: ${loginData.error.message}`;
         }
         
-        const { stdout, stderr } = await execAsync(`lime ${command}`, {
-            timeout: 30000, // 30 segundos timeout
-            encoding: 'utf8'
+        sessionKey = loginData.result;
+        
+        if (!sessionKey || sessionKey.status === 'Invalid user name or password') {
+            return 'Error: Credenciales inválidas. Verifica username y password.';
+        }
+
+        // 2. Ejecutar el método solicitado
+        let methodParams = [sessionKey];
+        
+        if (params.surveyId) {
+            methodParams.push(params.surveyId);
+        }
+        if (params.participantData) {
+            methodParams.push(...params.participantData);
+        }
+        if (params.args && Array.isArray(params.args)) {
+            methodParams.push(...params.args);
+        }
+        if (Object.keys(params).length > 0 && !params.surveyId && !params.args && !params.participantData) {
+            methodParams.push(...Object.values(params));
+        }
+        
+        const methodResponse = await fetch(LIMESURVEY_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                method: method,
+                params: methodParams,
+                id: 2
+            })
         });
+
+        if (!methodResponse.ok) {
+            return `Error ejecutando ${method}: ${methodResponse.status} - ${methodResponse.statusText}`;
+        }
+
+        const methodData = await methodResponse.json();
         
-        // Log detallado para debug
-        console.log('STDOUT:', stdout);
-        console.log('STDERR:', stderr);
+        if (methodData.error) {
+            return `Error en método ${method}: ${methodData.error.message}`;
+        }
+
+        // 3. Cerrar sesión
+        await fetch(LIMESURVEY_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                method: 'release_session_key',
+                params: [sessionKey],
+                id: 3
+            })
+        });
+
+        console.log('Método ejecutado exitosamente:', methodData.result);
+        return JSON.stringify(methodData.result, null, 2);
         
-        if (stderr) {
-            // Algunos comandos pueden tener warnings en stderr pero ser exitosos
-            if (stderr.toLowerCase().includes('error') || stderr.toLowerCase().includes('failed')) {
-                console.error('Error detectado en stderr:', stderr);
-                return `Error ejecutando comando: ${stderr}`;
-            } else {
-                console.warn('Warning en stderr (no crítico):', stderr);
+    } catch (error) {
+        console.error('Error ejecutando LimeSurvey API:', error);
+        
+        // Intentar cerrar sesión si existe
+        if (sessionKey) {
+            try {
+                await fetch(LIMESURVEY_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        method: 'release_session_key',
+                        params: [sessionKey],
+                        id: 99
+                    })
+                });
+            } catch (cleanupError) {
+                console.error('Error cerrando sesión:', cleanupError);
             }
         }
         
-        if (!stdout || stdout.trim() === '') {
-            return `Comando ejecutado, pero no hubo salida. Esto podría indicar un problema con el CLI de LimeSurvey.`;
-        }
-        
-        console.log('Comando ejecutado exitosamente:', stdout);
-        return stdout.trim();
-        
-    } catch (error) {
-        console.error('Error capturado ejecutando LimeSurvey CLI:', error);
-        
-        // Mensaje más descriptivo basado en el tipo de error
-        if (error.code === 'ENOENT') {
-            return `Error: El comando 'lime' no fue encontrado. Verifica que LimeSurvey CLI esté instalado y en el PATH.`;
-        } else if (error.signal === 'SIGTERM' || error.code === 'ETIMEDOUT') {
-            return `Error: El comando tardó demasiado en ejecutarse (timeout). Verifica la conectividad con LimeSurvey.`;
-        } else if (error.code) {
-            return `Error (código ${error.code}): ${error.message}. Stdout: ${error.stdout || 'vacío'}, Stderr: ${error.stderr || 'vacío'}`;
+        if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+            return `Error de conexión: No se puede conectar a ${LIMESURVEY_URL}. Verifica que el servidor esté funcionando.`;
+        } else if (error.name === 'AbortError') {
+            return 'Error: La petición tardó demasiado en responder (timeout).';
         } else {
             return `Error desconocido: ${error.message}`;
         }
