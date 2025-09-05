@@ -330,6 +330,9 @@ export class App {
         // In production, this should use the built files
         const isDev = process.env.NODE_ENV !== 'production'
         
+        logger.info(`🚀 [server]: Running in ${isDev ? 'DEVELOPMENT' : 'PRODUCTION'} mode`)
+        logger.info(`🚀 [server]: NODE_ENV = ${process.env.NODE_ENV}`)
+        
         if (isDev) {
             // For development, serve from public directory
             const uiPublicPath = path.resolve(__dirname, '../../ui/public')
@@ -343,22 +346,38 @@ export class App {
             })
         } else {
             // For production, try to use built UI files from multiple possible locations
-            let uiBuildPath: string
-            let uiHtmlPath: string
+            let uiBuildPath: string = ''
+            let uiHtmlPath: string = ''
             let foundBuild = false
             
-            // Try 1: Built UI files in container
-            const containerUiBuildPath = path.resolve(__dirname, '../../ui/build')
-            const containerUiHtmlPath = path.resolve(__dirname, '../../ui/build', 'index.html')
+            // Try 1: Built UI files in container (various possible paths)
+            const possiblePaths = [
+                // Standard container path
+                path.resolve(__dirname, '../../ui/build'),
+                // Alternative path if running from different location
+                path.resolve(process.cwd(), 'packages/ui/build'),
+                // Docker/Fly.io path from /usr/src
+                '/usr/src/packages/ui/build'
+            ]
             
-            try {
-                // Check if built UI files exist
-                require('fs').accessSync(containerUiHtmlPath)
-                uiBuildPath = containerUiBuildPath
-                uiHtmlPath = containerUiHtmlPath
-                foundBuild = true
-                logger.info('✅ [server]: Using built UI files from container')
-            } catch (error) {
+            // Try each possible path
+            for (const buildPath of possiblePaths) {
+                try {
+                    const htmlPath = path.resolve(buildPath, 'index.html')
+                    logger.info(`🔍 [server]: Checking build path: ${buildPath}`)
+                    logger.info(`🔍 [server]: Looking for HTML at: ${htmlPath}`)
+                    require('fs').accessSync(htmlPath)
+                    uiBuildPath = buildPath
+                    uiHtmlPath = htmlPath
+                    foundBuild = true
+                    logger.info(`✅ [server]: Using built UI files from: ${buildPath}`)
+                    break
+                } catch (error) {
+                    logger.info(`❌ [server]: Build not found at: ${buildPath}`)
+                }
+            }
+            
+            if (!foundBuild) {
                 // Try 2: flowise-ui package (legacy)
                 try {
                     const packagePath = getNodeModulesPackagePath('flowise-ui')

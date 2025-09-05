@@ -122,6 +122,42 @@ $env:NODE_OPTIONS="--max-old-space-size=4096"
 - API routes: `packages/server/src/routes/`
 - Database models: `packages/server/src/database/entities/`
 
+## Upstream Synchronization Strategy
+
+**Formmy Tasks** se mantiene sincronizado con el repositorio oficial de Flowise mientras preserva el branding y personalización de Formmy.
+
+### Quick Sync
+```bash
+# Sincronización automática (recomendado)
+./sync-with-upstream.sh
+```
+
+### Manual Sync
+```bash
+# 1. Fetch cambios del upstream
+git fetch upstream
+
+# 2. Merge cambios del repositorio oficial
+git merge upstream/main
+
+# 3. Aplicar branding de Formmy
+git merge formmy-branding
+```
+
+### Archivos Protegidos (Branding Formmy)
+- `packages/ui/src/ui-component/extended/Logo.jsx` - Componente logo
+- `packages/ui/public/index.html` - Meta tags y títulos
+- `packages/ui/public/formmy_*.svg` - Logos de Formmy
+- `packages/ui/src/layout/MainLayout/Header/index.jsx` - Header customizado
+- `packages/server/.env` - Configuración servidor
+- `improved-limesurvey-tool.js` - Herramienta LimeSurvey
+
+### Remotes Configurados
+- `origin`: Tu fork de Formmy Tasks
+- `upstream`: Repositorio oficial Flowise
+
+📖 **Documentación completa**: Ver `UPSTREAM_SYNC_STRATEGY.md`
+
 ## Troubleshooting Deployment
 
 ### Common Issues Resolved:
