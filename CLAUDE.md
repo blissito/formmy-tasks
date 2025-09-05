@@ -165,6 +165,7 @@ git merge formmy-branding
 2. **Connection Refused**: Added HOST=0.0.0.0 environment variable
 3. **Health Check Timeouts**: Adjusted grace_period to 60s
 4. **Build Memory**: Set NODE_OPTIONS=--max-old-space-size=8192
+5. **"Malformed UTF-8 data" Error**: Almost always caused by corrupted/invalid OpenAI API keys, not actual UTF-8 encoding issues
 
 ### Deploy Command:
 ```bash
