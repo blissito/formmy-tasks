@@ -231,7 +231,7 @@ class MongoDBAtlas_Tools implements INode {
         const tools = [
             new DynamicTool({
                 name: 'mongodb_find',
-                description: 'Find documents in MongoDB collection. Format: "collection|filter|options" where filter and options are JSON objects. Example: "users|{\"age\": {\"$gt\": 18}}|{\"limit\": 10}"',
+                description: 'Find documents in MongoDB collection. Format: "collection|filter|options" where filter and options are JSON objects. Example: "users|{"age": {"$gt": 18}}|{"limit": 10}"',
                 func: async (input: string) => {
                     try {
                         const parts = input.split('|')
@@ -256,7 +256,7 @@ class MongoDBAtlas_Tools implements INode {
 
             new DynamicTool({
                 name: 'mongodb_insert',
-                description: 'Insert a document into MongoDB collection. Format: "collection|document" where document is a JSON object. Example: "users|{\"name\": \"John\", \"age\": 30}"',
+                description: 'Insert a document into MongoDB collection. Format: "collection|document" where document is a JSON object. Example: "users|{"name": "John", "age": 30}"',
                 func: async (input: string) => {
                     try {
                         const separatorIndex = input.indexOf('|')
@@ -282,7 +282,7 @@ class MongoDBAtlas_Tools implements INode {
 
             new DynamicTool({
                 name: 'mongodb_update',
-                description: 'Update documents in MongoDB collection. Format: "collection|filter|update|options" where filter, update, and options are JSON objects. Example: "users|{\"name\": \"John\"}|{\"$set\": {\"age\": 31}}|{\"upsert\": true}"',
+                description: 'Update documents in MongoDB collection. Format: "collection|filter|update|options" where filter, update, and options are JSON objects. Example: "users|{"name": "John"}|{"$set": {"age": 31}}|{"upsert": true}"',
                 func: async (input: string) => {
                     try {
                         const parts = input.split('|')
@@ -309,7 +309,7 @@ class MongoDBAtlas_Tools implements INode {
 
             new DynamicTool({
                 name: 'mongodb_delete',
-                description: 'Delete a document from MongoDB collection. Format: "collection|filter" where filter is a JSON object. Example: "users|{\"name\": \"John\"}"',
+                description: 'Delete a document from MongoDB collection. Format: "collection|filter" where filter is a JSON object. Example: "users|{"name": "John"}"',
                 func: async (input: string) => {
                     try {
                         const separatorIndex = input.indexOf('|')
@@ -335,7 +335,7 @@ class MongoDBAtlas_Tools implements INode {
 
             new DynamicTool({
                 name: 'mongodb_aggregate',
-                description: 'Run aggregation pipeline on MongoDB collection. Format: "collection|pipeline" where pipeline is a JSON array. Example: "users|[{\"$group\": {\"_id\": \"$department\", \"count\": {\"$sum\": 1}}}]"',
+                description: 'Run aggregation pipeline on MongoDB collection. Format: "collection|pipeline" where pipeline is a JSON array. Example: "users|[{"$group": {"_id": "$department", "count": {"$sum": 1}}}]"',
                 func: async (input: string) => {
                     try {
                         const separatorIndex = input.indexOf('|')
@@ -365,7 +365,7 @@ class MongoDBAtlas_Tools implements INode {
 
             new DynamicTool({
                 name: 'mongodb_count',
-                description: 'Count documents in MongoDB collection. Format: "collection|filter" where filter is optional JSON object. Example: "users|{\"age\": {\"$gt\": 18}}" or just "users"',
+                description: 'Count documents in MongoDB collection. Format: "collection|filter" where filter is optional JSON object. Example: "users|{"age": {"$gt": 18}}" or just "users"',
                 func: async (input: string) => {
                     try {
                         const parts = input.split('|')
