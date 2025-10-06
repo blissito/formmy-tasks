@@ -1,0 +1,379 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.7;
+  color: #1a1a1a;
+  margin: 0;
+  padding: 40px;
+  background: white;
+  font-size: 11pt;
+}
+
+h1 {
+  color: #9A99EA;
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 5px;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+h2 {
+  color: #9A99EA;
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 35px;
+  margin-bottom: 15px;
+  padding-left: 15px;
+  border-left: 5px solid #9A99EA;
+}
+
+h3 {
+  color: #333;
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #555;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 30px;
+  font-style: italic;
+}
+
+.precio {
+  background: linear-gradient(135deg, #9A99EA 0%, #7B7AD4 100%);
+  color: white;
+  padding: 35px;
+  border-radius: 15px;
+  text-align: center;
+  margin: 35px auto;
+  box-shadow: 0 10px 30px rgba(154, 153, 234, 0.3);
+  max-width: 500px;
+  position: relative;
+}
+
+.precio::before {
+  content: "💎 OFERTA EXCLUSIVA 💎";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFD700;
+  color: #1a1a1a;
+  padding: 5px 20px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.precio h2 {
+  color: white;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+.precio .precio-original {
+  text-decoration: line-through;
+  opacity: 0.7;
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.precio p {
+  margin: 12px 0 0 0;
+  font-size: 16px;
+  font-weight: 300;
+  opacity: 0.95;
+}
+
+.precio .badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.25);
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin-top: 15px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.highlight {
+  background: linear-gradient(to right, #f8f7ff 0%, #ffffff 100%);
+  padding: 25px 30px;
+  border-radius: 12px;
+  margin: 25px 0;
+  border-left: 5px solid #9A99EA;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.highlight strong {
+  color: #9A99EA;
+  font-size: 16px;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 20px 0;
+}
+
+li {
+  padding: 10px 0;
+  padding-left: 35px;
+  position: relative;
+  font-size: 11pt;
+}
+
+li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #9A99EA;
+  font-weight: 800;
+  font-size: 20px;
+  background: #f0f0ff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 24px;
+}
+
+.sesion {
+  background: #fafafa;
+  padding: 25px;
+  margin: 20px 0;
+  border-radius: 12px;
+  border: 2px solid #e8e8e8;
+  transition: all 0.3s ease;
+  page-break-inside: avoid;
+}
+
+.sesion h3 {
+  margin-top: 0;
+  color: #9A99EA;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.sesion h3::before {
+  content: "📚 ";
+  margin-right: 5px;
+}
+
+.sesion ul {
+  margin: 10px 0;
+}
+
+.sesion li {
+  font-size: 10pt;
+  padding: 6px 0 6px 30px;
+}
+
+.sesion li:before {
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+}
+
+.sesion strong {
+  color: #9A99EA;
+  font-weight: 700;
+}
+
+.instructor {
+  background: linear-gradient(135deg, #f9f9ff 0%, #ffffff 100%);
+  padding: 25px 30px;
+  border-radius: 12px;
+  margin: 25px 0;
+  border: 2px solid #e8e8ff;
+  page-break-inside: avoid;
+}
+
+.instructor h3 {
+  color: #9A99EA;
+  margin-top: 0;
+}
+
+.instructor ul {
+  margin-top: 15px;
+}
+
+.instructor li {
+  font-size: 10pt;
+}
+
+.cta {
+  background: linear-gradient(135deg, #9A99EA 0%, #7B7AD4 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  margin-top: 40px;
+  font-size: 16px;
+  box-shadow: 0 10px 30px rgba(154, 153, 234, 0.3);
+  page-break-inside: avoid;
+}
+
+.cta strong {
+  display: block;
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+
+.cta p {
+  margin: 15px 0;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.beneficios-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 25px 0;
+}
+
+.beneficio-item {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #9A99EA;
+}
+
+.beneficio-item h4 {
+  color: #9A99EA;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.beneficio-item p {
+  margin: 0;
+  font-size: 10pt;
+  color: #555;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 30px 0;
+  padding: 25px;
+  background: #f9f9ff;
+  border-radius: 12px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 32px;
+  font-weight: 800;
+  color: #9A99EA;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 30px 0;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+  color: #666;
+  font-size: 10pt;
+}
+
+.footer strong {
+  color: #9A99EA;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.garantia {
+  background: #fff8e1;
+  border: 2px dashed #ffc107;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 25px 0;
+  text-align: center;
+}
+
+.garantia strong {
+  color: #f57f17;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.incluye-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.incluye-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 10pt;
+}
+
+.incluye-item::before {
+  content: "✓";
+  color: #9A99EA;
+  font-weight: 800;
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+strong {
+  font-weight: 700;
+}
+
+.page-break {
+  page-break-before: always;
+}
