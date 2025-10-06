@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is **Formmy Tasks** - a rebranded and customized AI-powered forms and chat platform. Originally based on Flowise, this application has been fully rebranded with Formmy's visual identity and deployed as a SaaS solution.
 
-**Live URL**: https://ciro-flows.fly.dev/  
+**Live URL**: Multiple instances (see Deployment Pipeline section)
 **Brand Color**: #9A99EA (Formmy purple)  
 **Original base**: Flowise (https://github.com/FlowiseAI/Flowise)
 
@@ -92,7 +92,7 @@ $env:NODE_OPTIONS="--max-old-space-size=4096"
 - `fly.toml` - Configured with 1GB memory, 2 CPUs and proper host binding
 
 ### Deployment Configuration
-- **App Name**: ciro-flows
+- **App Name**: Variable per instance (m-flows, etc.)
 - **Host Binding**: 0.0.0.0:3000 (fixed load balancer issues)
 - **Health Checks**: Optimized timeouts (grace_period: 60s)
 - **Database**: SQLite at /data/database.sqlite
