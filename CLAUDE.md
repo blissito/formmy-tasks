@@ -126,16 +126,30 @@ pnpm build
 ```
 
 #### 3. Deploy to Fly.io
+
+**IMPORTANTE**: Debes crear el volumen persistente ANTES del primer deploy, o la aplicación fallará al iniciar.
+
 ```bash
-# Create the app (if it doesn't exist)
+# 1. Create the app (if it doesn't exist)
 flyctl apps create your-app-name
 
-# Create persistent volume for SQLite database
+# 2. Create persistent volume for SQLite database
+#    - flowise_data: nombre del volumen (debe coincidir con fly.toml)
+#    - --region iad: región de Virginia (USA East)
+#    - --size 3: tamaño en GB (3GB es suficiente para empezar)
+#    - --yes: confirma automáticamente
 flyctl volumes create flowise_data --app your-app-name --region iad --size 3 --yes
 
-# Deploy the application
+# 3. Deploy the application
+#    El volumen debe existir antes del deploy o la app no arrancará
 flyctl deploy --app your-app-name
 ```
+
+**Nota sobre el volumen:**
+- El volumen es **REQUERIDO** para almacenar la base de datos SQLite
+- Debe crearse en la misma región que la app (`iad` por defecto)
+- El nombre `flowise_data` está configurado en `fly.toml` bajo `[[mounts]]`
+- Los datos persisten entre deployments y reinios de la aplicación
 
 #### 4. Seed Admin Users
 After deployment, create admin users using the seed script:
@@ -171,9 +185,10 @@ curl https://your-app-name.fly.dev/api/v1/ping
 
 ### Deployed Instances
 
-| Instance | URL | Created | Users |
-|----------|-----|---------|-------|
-| m-flows | https://m-flows.fly.dev | Oct 2025 | 3 admin users |
+| Instance | URL | Created | Users | RAM |
+|----------|-----|---------|-------|-----|
+| m-flows | https://m-flows.fly.dev | Oct 2025 | 3 admin users | 1GB |
+| agentes | https://agentes.fly.dev | Oct 2025 | No users yet | 2GB |
 
 ### Standard Deployment (Legacy)
 
